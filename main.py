@@ -42,14 +42,76 @@ class Ball(pygame.sprite.Sprite):
 		self.area = screen.get_rect()
 		self.vector = vector
 		self.hit = 0
-	
-	def update(self):
-		newpos = calcnewpos(self.rect, self.vector)
-		self.rect = newpos
-		(angle, z) = self.vector
-		
-		#check for collision
 
+        def calcnewpos(self,rect,vector):
+                (angle,z) = vector
+                (dx,dy) = (z*math.cos(angle), z*math.sin(angle))
+                return rect.move(dx,dy)
+
+	def update(self):
+		newpos = self.calcnewpos(self.rect, self.vector)
+		self.rect = newpos
+		(angle,z) = self.vector
+		
+		#check for collision with walls
+		if not self.area.contains(newpos):
+			tl = not self.area.collidepoint(newpos.topleft)
+			tr = not self.area.collidepoint(newpos.topright)
+			bl = not self.area.collidepoint(newpos.bottomleft)
+			br = not self.area.collidepoint(newpos.bottomright)
+			if tr and tl or (br and bl):
+				angle = -angle
+			if tl and bl:
+				angle = math.pi - angle
+			if tr and br:
+				angle = math.pi - angle
+
+		self.vector = (angle,z)
+		
 class Brick(pygame.sprite.Sprite):
 	""" brick object """
 	""" much to do here """
+
+
+def main():
+	pygame.init()
+	screen = pygame.display.set_mode((640, 480))
+	pygame.display.set_caption('b r i c k b r e a k e r')
+
+	# fill background
+	background = pygame.Surface(screen.get_size())
+	background = background.convert()
+	background.fill((0,0,0))
+
+	# initiliaze bricks
+	# initialize player
+	# initialize ball
+	speed = 13
+	rand = ((0.1*(random.randint(5,8))))
+	ball = Ball((0,0), (0.47,speed))
+
+	# initialize sprites
+	ballsprite = pygame.sprite.RenderPlain(ball)
+
+	# blit everything to the screen
+	screen.blit(background, (0,0))
+	pygame.display.flip()
+
+	# initialize clock
+	clock = pygame.time.Clock()
+
+	# event loop
+	while 1:
+		# make sure game does not run greater than 60 fps
+		clock.tick(60)
+		
+		for event in pygame.event.get():
+			if event.type == QUIT:
+				return
+		
+		screen.blit(background, ball.rect, ball.rect)
+		ballsprite.update()
+		ballsprite.draw(screen)
+		pygame.display.flip()
+
+if __name__ == '__main__': main()
