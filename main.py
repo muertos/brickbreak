@@ -71,7 +71,20 @@ class Ball(pygame.sprite.Sprite):
 class Brick(pygame.sprite.Sprite):
 	""" brick object """
 	""" much to do here """
+	def __init__(self, pos):
+		pygame.sprite.Sprite.__init__(self)
+		self.image, self.rect = load_png('brick.png')
+		screen = pygame.display.get_surface()
+		self.area = screen.get_rect()
 
+#	def removebrick(self):
+		# removes brick when hit
+
+		
+		
+
+#class Level(pygame.sprite.Sprite):
+	# nothing for now
 
 def main():
 	pygame.init()
@@ -84,6 +97,9 @@ def main():
 	background.fill((0,0,0))
 
 	# initiliaze bricks
+	global brick 
+	brick = Brick(("center"))
+	
 	# initialize player
 	# initialize ball
 	speed = 13
@@ -92,6 +108,9 @@ def main():
 
 	# initialize sprites
 	ballsprite = pygame.sprite.RenderPlain(ball)
+	bricksprite = pygame.sprite.RenderPlain(brick)
+
+	# draw brick here for now
 
 	# blit everything to the screen
 	screen.blit(background, (0,0))
@@ -112,6 +131,7 @@ def main():
 		screen.blit(background, ball.rect, ball.rect)
 		ballsprite.update()
 		ballsprite.draw(screen)
+		bricksprite.draw(screen)	
 		pygame.display.flip()
 
 if __name__ == '__main__': main()
