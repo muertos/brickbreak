@@ -42,3 +42,14 @@ class Ball(pygame.sprite.Sprite):
 		self.area = screen.get_rect()
 		self.vector = vector
 		self.hit = 0
+	
+	def update(self):
+		newpos = calcnewpos(self.rect, self.vector)
+		self.rect = newpos
+		(angle, z) = self.vector
+		
+		#check for collision
+
+class Brick(pygame.sprite.Sprite):
+	""" brick object """
+	""" much to do here """
