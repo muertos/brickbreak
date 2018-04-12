@@ -42,7 +42,8 @@ class Ball(pygame.sprite.Sprite):
 		self.area = screen.get_rect()
 		self.vector = vector
 		self.hit = 0
-
+		self.brick = brick.get_rect()	
+	
         def calcnewpos(self,rect,vector):
                 (angle,z) = vector
                 (dx,dy) = (z*math.cos(angle), z*math.sin(angle))
@@ -65,22 +66,33 @@ class Ball(pygame.sprite.Sprite):
 				angle = math.pi - angle
 			if tr and br:
 				angle = math.pi - angle
+		if self.rect.colliderect(brick.rect) == 1 and not self.hit:
+			if self.rect.collidepoint(brick.topleft) or self.rect.collidepoint(brick.topright):
+				angle = -angle
+				self.hit = not self.hit
+			if self.rect.collidepoint(brick.bottomleft) or self.rect.collidepoint(brick.bottomright):
+                                angle = -angle
+                                self.hit = not self.hit
+
+			if self.rect.colliderect(brick.rect):
+				angle = math.pi - angle
+				self.hit = not self.hit
+		elif self.hit:
+			self.hit = not self.hit
 
 		self.vector = (angle,z)
 		
 class Brick(pygame.sprite.Sprite):
 	""" brick object """
 	""" much to do here """
-	def __init__(self, pos):
+	def __init__(self, (posx, posy)):
 		pygame.sprite.Sprite.__init__(self)
+
 		self.image, self.rect = load_png('brick.png')
 		screen = pygame.display.get_surface()
 		self.area = screen.get_rect()
-
-#	def removebrick(self):
-		# removes brick when hit
-
-		
+		self.rect.x = posx
+		self.rect.y = posy		
 		
 
 #class Level(pygame.sprite.Sprite):
@@ -98,11 +110,11 @@ def main():
 
 	# initiliaze bricks
 	global brick 
-	brick = Brick(("center"))
+	brick = Brick((240, 145))
 	
 	# initialize player
 	# initialize ball
-	speed = 13
+	speed = 13 
 	rand = ((0.1*(random.randint(5,8))))
 	ball = Ball((0,0), (0.47,speed))
 
