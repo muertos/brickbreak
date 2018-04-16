@@ -42,7 +42,6 @@ class Ball(pygame.sprite.Sprite):
 		self.area = screen.get_rect()
 		self.vector = vector
 		self.hit = 0
-		self.brick = brick.get_rect()	
 	
         def calcnewpos(self,rect,vector):
                 (angle,z) = vector
@@ -53,7 +52,7 @@ class Ball(pygame.sprite.Sprite):
 		newpos = self.calcnewpos(self.rect, self.vector)
 		self.rect = newpos
 		(angle,z) = self.vector
-		
+	
 		#check for collision with walls
 		if not self.area.contains(newpos):
 			tl = not self.area.collidepoint(newpos.topleft)
@@ -67,15 +66,17 @@ class Ball(pygame.sprite.Sprite):
 			if tr and br:
 				angle = math.pi - angle
 		if self.rect.colliderect(brick.rect) == 1 and not self.hit:
-			if self.rect.collidepoint(brick.topleft) or self.rect.collidepoint(brick.topright):
+			bricktop = Rect(brick.rect.x,brick.rect.y,brick.rect.width,1)
+			brickbottom = Rect(brick.rect.x,brick.rect.y+brick.rect.height,brick.rect.width,1)
+			brickleft = Rect(brick.rect.x,brick.rect.y,1,brick.rect.y+brick.rect.height)
+			brickright = Rect(brick.rect.x+brick.rect.width,brick.rect.y,1,brick.rect.y+brick.rect.height)
+			print bricktop, brickbottom	
+			if self.rect.colliderect(bricktop) or self.rect.colliderect(brickbottom):
 				angle = -angle
 				self.hit = not self.hit
-			if self.rect.collidepoint(brick.bottomleft) or self.rect.collidepoint(brick.bottomright):
-                                angle = -angle
-                                self.hit = not self.hit
 
-			if self.rect.colliderect(brick.rect):
-				angle = math.pi - angle
+			if self.rect.colliderect(brickleft) or self.rect.colliderect(brickright):
+				angle = -angle
 				self.hit = not self.hit
 		elif self.hit:
 			self.hit = not self.hit
@@ -87,8 +88,7 @@ class Brick(pygame.sprite.Sprite):
 	""" much to do here """
 	def __init__(self, (posx, posy)):
 		pygame.sprite.Sprite.__init__(self)
-
-		self.image, self.rect = load_png('brick.png')
+		self.image, self.rect = load_png('brick2.png')
 		screen = pygame.display.get_surface()
 		self.area = screen.get_rect()
 		self.rect.x = posx
@@ -110,8 +110,9 @@ def main():
 
 	# initiliaze bricks
 	global brick 
-	brick = Brick((240, 145))
-	
+	brick = Brick((231, 245))
+	print brick.rect	
+
 	# initialize player
 	# initialize ball
 	speed = 13 
