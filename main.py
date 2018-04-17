@@ -66,17 +66,20 @@ class Ball(pygame.sprite.Sprite):
 			if tr and br:
 				angle = math.pi - angle
 		if self.rect.colliderect(brick.rect) == 1 and not self.hit:
+			quad = ((angle*(180/math.pi))%360)//90
 			bricktop = Rect(brick.rect.x,brick.rect.y,brick.rect.width,1)
 			brickbottom = Rect(brick.rect.x,brick.rect.y+brick.rect.height,brick.rect.width,1)
 			brickleft = Rect(brick.rect.x,brick.rect.y,1,brick.rect.y+brick.rect.height)
 			brickright = Rect(brick.rect.x+brick.rect.width,brick.rect.y,1,brick.rect.y+brick.rect.height)
-			print bricktop, brickbottom	
+#			print bricktop, brickbottom	
 			if self.rect.colliderect(bricktop) or self.rect.colliderect(brickbottom):
+				print "ball hit top or bottom and angle is in quadrant, ", quad
 				angle = -angle
 				self.hit = not self.hit
 
-			if self.rect.colliderect(brickleft) or self.rect.colliderect(brickright):
-				angle = -angle
+			if (self.rect.colliderect(brickleft) or self.rect.colliderect(brickright)) and not self.hit:
+				print "ball hit left or right and angle is in quadrant, ", quad
+				angle = math.pi - angle
 				self.hit = not self.hit
 		elif self.hit:
 			self.hit = not self.hit
@@ -110,14 +113,14 @@ def main():
 
 	# initiliaze bricks
 	global brick 
-	brick = Brick((231, 245))
+	brick = Brick((231, 80))
 	print brick.rect	
 
 	# initialize player
 	# initialize ball
 	speed = 13 
 	rand = ((0.1*(random.randint(5,8))))
-	ball = Ball((0,0), (0.47,speed))
+	ball = Ball((0,0), (2,speed))
 
 	# initialize sprites
 	ballsprite = pygame.sprite.RenderPlain(ball)
