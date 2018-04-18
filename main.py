@@ -128,12 +128,21 @@ class Brick(pygame.sprite.Sprite):
 	""" much to do here """
 	def __init__(self, (posx, posy)):
 		pygame.sprite.Sprite.__init__(self)
-		self.image, self.rect = load_png('brick2.png')
+		self.image, self.rect = load_png('brick.png')
 		screen = pygame.display.get_surface()
 		self.area = screen.get_rect()
 		self.rect.x = posx
 		self.rect.y = posy		
 		
+def load_bricks(level):
+	"""returns list of bricks (x,y) coords"""
+	newlevel = [0] * len(level)
+	for b in range(len(level)):
+		if level[b] == 1:
+			#insert a brick with coords into the array
+			#just drawing one line for now, keeping y=40
+			newlevel[b] = Brick((62*b, 40))
+	return newlevel
 
 #class Level(pygame.sprite.Sprite):
 	# nothing for now
@@ -149,9 +158,14 @@ def main():
 	background.fill((0,0,0))
 
 	# initiliaze bricks
-	global brick 
-	brick = Brick((231, 300))
-	print brick.rect	
+#	global brick 
+	global bricks
+	level = [0, 1, 0, 1, 0, 1]
+#	brick = Brick((231, 300))
+	bricks = load_bricks(level)
+	for b in bricks:
+		print b
+#	print brick.rect	
 
 	# initialize player
 	# initialize ball
@@ -161,7 +175,9 @@ def main():
 
 	# initialize sprites
 	ballsprite = pygame.sprite.RenderPlain(ball)
-	bricksprite = pygame.sprite.RenderPlain(brick)
+	drawbricks = []
+	for i in range(len(bricks)):
+		drawbricks[i] = pygame.sprite.RenderPlain(bricks[i])
 
 	# draw brick here for now
 
@@ -183,7 +199,8 @@ def main():
 		
 		screen.blit(background, ball.rect, ball.rect)
 		ballsprite.update()
-		ballsprite.draw(screen)
+		for i in range(len(drawbricks)):
+			drawbricks[i].draw(screen)
 		bricksprite.draw(screen)	
 		pygame.display.flip()
 
