@@ -67,18 +67,55 @@ class Ball(pygame.sprite.Sprite):
 				angle = math.pi - angle
 		if self.rect.colliderect(brick.rect) == 1 and not self.hit:
 			quad = ((angle*(180/math.pi))%360)//90
-			bricktop = Rect(brick.rect.x,brick.rect.y,brick.rect.width,1)
-			brickbottom = Rect(brick.rect.x,brick.rect.y+brick.rect.height,brick.rect.width,1)
-			brickleft = Rect(brick.rect.x,brick.rect.y,1,brick.rect.y+brick.rect.height)
-			brickright = Rect(brick.rect.x+brick.rect.width,brick.rect.y,1,brick.rect.y+brick.rect.height)
-#			print bricktop, brickbottom	
-			if self.rect.colliderect(bricktop) or self.rect.colliderect(brickbottom):
-				print "ball hit top or bottom and angle is in quadrant, ", quad
-				angle = -angle
+			bt = Rect(brick.rect.x,brick.rect.y,brick.rect.width,1)
+			bb = Rect(brick.rect.x,brick.rect.y+brick.rect.height,brick.rect.width,1)
+			bl = Rect(brick.rect.x,brick.rect.y,1,brick.rect.y+brick.rect.height)
+			br = Rect(brick.rect.x+brick.rect.width,brick.rect.y,1,brick.rect.y+brick.rect.height)
+			if self.rect.colliderect(bt):
+				#handle top left corner
+				if self.rect.colliderect(bl):
+					#if both top and left are colliding, but left moreso, bounce down
+					if abs(self.rect.centerx - brick.rect.left) > abs(self.rect.centery - brick.rect.top):
+						angle = math.pi - angle
+					elif abs(self.rect.centerx - brick.rect.left) < abs(self.rect.centery - brick.rect.top):
+						angle = -angle
+					else:
+						angle = angle - math.pi
+				#handle top right corner
+                                elif self.rect.colliderect(br):
+                                        #if both top and right are colliding, but right moreso, bounce down
+                                        if abs(self.rect.centerx - brick.rect.right) > abs(self.rect.centery - brick.rect.top):
+                                                angle = math.pi - angle
+                                        elif abs(self.rect.centerx - brick.rect.right) < abs(self.rect.centery - brick.rect.top):
+                                                angle = -angle
+					else:
+						angle = angle - math.pi
+				else:
+					angle = -angle
 				self.hit = not self.hit
-
-			if (self.rect.colliderect(brickleft) or self.rect.colliderect(brickright)) and not self.hit:
-				print "ball hit left or right and angle is in quadrant, ", quad
+			if self.rect.colliderect(bb):
+                                #handle bottom left corner
+                                if self.rect.colliderect(bl):
+                                        #if both bottom and left are colliding, but left moreso, bounce up
+                                        if abs(self.rect.centerx - brick.rect.left) > abs(self.rect.centery - brick.rect.bottom):
+                                                angle = math.pi - angle
+                                        elif abs(self.rect.centerx - brick.rect.left) < abs(self.rect.centery - brick.rect.bottom):
+                                                angle = -angle
+					else:
+						angle = angle - math.pi
+                                #handle bottom right corner
+                                elif self.rect.colliderect(br):
+                                        #if both bottom and right are colliding, but right moreso, bounce up
+                                        if abs(self.rect.centerx - brick.rect.right) > abs(self.rect.centery - brick.rect.bottom):
+                                                angle = math.pi - angle
+                                        elif abs(self.rect.centerx - brick.rect.right) > abs(self.rect.centery - brick.rect.bottom):
+                                                angle = -angle
+					else:
+						angle = angle - math.pi
+                                else:
+                                        angle = -angle
+                                self.hit = not self.hit	
+			if (self.rect.colliderect(br) or self.rect.colliderect(bl)) and not self.hit:
 				angle = math.pi - angle
 				self.hit = not self.hit
 		elif self.hit:
@@ -113,14 +150,14 @@ def main():
 
 	# initiliaze bricks
 	global brick 
-	brick = Brick((231, 80))
+	brick = Brick((231, 300))
 	print brick.rect	
 
 	# initialize player
 	# initialize ball
-	speed = 13 
+	speed = 3 
 	rand = ((0.1*(random.randint(5,8))))
-	ball = Ball((0,0), (2,speed))
+	ball = Ball((0,0), (.743723,speed))
 
 	# initialize sprites
 	ballsprite = pygame.sprite.RenderPlain(ball)
@@ -138,7 +175,7 @@ def main():
 	# event loop
 	while 1:
 		# make sure game does not run greater than 60 fps
-		clock.tick(60)
+		clock.tick(120)
 		
 		for event in pygame.event.get():
 			if event.type == QUIT:
