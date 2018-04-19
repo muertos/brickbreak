@@ -65,61 +65,62 @@ class Ball(pygame.sprite.Sprite):
 				angle = math.pi - angle
 			if tr and br:
 				angle = math.pi - angle
-		if self.rect.colliderect(brick.rect) == 1 and not self.hit:
-			quad = ((angle*(180/math.pi))%360)//90
-			bt = Rect(brick.rect.x,brick.rect.y,brick.rect.width,1)
-			bb = Rect(brick.rect.x,brick.rect.y+brick.rect.height,brick.rect.width,1)
-			bl = Rect(brick.rect.x,brick.rect.y,1,brick.rect.y+brick.rect.height)
-			br = Rect(brick.rect.x+brick.rect.width,brick.rect.y,1,brick.rect.y+brick.rect.height)
-			if self.rect.colliderect(bt):
-				#handle top left corner
-				if self.rect.colliderect(bl):
-					#if both top and left are colliding, but left moreso, bounce down
-					if abs(self.rect.centerx - brick.rect.left) > abs(self.rect.centery - brick.rect.top):
-						angle = math.pi - angle
-					elif abs(self.rect.centerx - brick.rect.left) < abs(self.rect.centery - brick.rect.top):
-						angle = -angle
-					else:
-						angle = angle - math.pi
-				#handle top right corner
-                                elif self.rect.colliderect(br):
-                                        #if both top and right are colliding, but right moreso, bounce down
-                                        if abs(self.rect.centerx - brick.rect.right) > abs(self.rect.centery - brick.rect.top):
-                                                angle = math.pi - angle
-                                        elif abs(self.rect.centerx - brick.rect.right) < abs(self.rect.centery - brick.rect.top):
-                                                angle = -angle
-					else:
-						angle = angle - math.pi
-				else:
-					angle = -angle
-				self.hit = not self.hit
-			if self.rect.colliderect(bb):
-                                #handle bottom left corner
-                                if self.rect.colliderect(bl):
-                                        #if both bottom and left are colliding, but left moreso, bounce up
-                                        if abs(self.rect.centerx - brick.rect.left) > abs(self.rect.centery - brick.rect.bottom):
-                                                angle = math.pi - angle
-                                        elif abs(self.rect.centerx - brick.rect.left) < abs(self.rect.centery - brick.rect.bottom):
-                                                angle = -angle
-					else:
-						angle = angle - math.pi
-                                #handle bottom right corner
-                                elif self.rect.colliderect(br):
-                                        #if both bottom and right are colliding, but right moreso, bounce up
-                                        if abs(self.rect.centerx - brick.rect.right) > abs(self.rect.centery - brick.rect.bottom):
-                                                angle = math.pi - angle
-                                        elif abs(self.rect.centerx - brick.rect.right) > abs(self.rect.centery - brick.rect.bottom):
-                                                angle = -angle
-					else:
-						angle = angle - math.pi
-                                else:
-                                        angle = -angle
-                                self.hit = not self.hit	
-			if (self.rect.colliderect(br) or self.rect.colliderect(bl)) and not self.hit:
-				angle = math.pi - angle
-				self.hit = not self.hit
-		elif self.hit:
-			self.hit = not self.hit
+                for brick in bricks:
+	                if self.rect.colliderect(brick.rect) == 1 and not self.hit:
+	                        quad = ((angle*(180/math.pi))%360)//90
+	                        bt = Rect(brick.rect.x,brick.rect.y,brick.rect.width,1)
+	                        bb = Rect(brick.rect.x,brick.rect.y+brick.rect.height,brick.rect.width,1)
+	                        bl = Rect(brick.rect.x,brick.rect.y,1,brick.rect.y+brick.rect.height)
+	                        br = Rect(brick.rect.x+brick.rect.width,brick.rect.y,1,brick.rect.y+brick.rect.height)
+	                        if self.rect.colliderect(bt):
+	                                #handle top left corner
+	                                if self.rect.colliderect(bl):
+	                                        #if both top and left are colliding, but left moreso, bounce down
+	                                        if abs(self.rect.centerx - brick.rect.left) > abs(self.rect.centery - brick.rect.top):
+	                                                angle = math.pi - angle
+	                                        elif abs(self.rect.centerx - brick.rect.left) < abs(self.rect.centery - brick.rect.top):
+	                                                angle = -angle
+	                                        else:
+	                                                angle = angle - math.pi
+	                                #handle top right corner
+	                                elif self.rect.colliderect(br):
+	                                    #if both top and right are colliding, but right moreso, bounce down
+	                                        if abs(self.rect.centerx - brick.rect.right) > abs(self.rect.centery - brick.rect.top):
+	                                                angle = math.pi - angle
+	                                        elif abs(self.rect.centerx - brick.rect.right) < abs(self.rect.centery - brick.rect.top):
+	                                                angle = -angle
+	                                        else:
+	                                                angle = angle - math.pi
+	                                else:
+	                                        angle = -angle
+	                                self.hit = not self.hit
+	                        if self.rect.colliderect(bb):
+	                                 #handle bottom left corner
+	                                 if self.rect.colliderect(bl):
+	                                         #if both bottom and left are colliding, but left moreso, bounce up
+	                                         if abs(self.rect.centerx - brick.rect.left) > abs(self.rect.centery - brick.rect.bottom):
+	                                                 angle = math.pi - angle
+	                                         elif abs(self.rect.centerx - brick.rect.left) < abs(self.rect.centery - brick.rect.bottom):
+	                                                 angle = -angle
+	                                         else:
+	                                                 angle = angle - math.pi
+	                                 #handle bottom right corner
+	                                 elif self.rect.colliderect(br):
+	                                         #if both bottom and right are colliding, but right moreso, bounce up
+	                                         if abs(self.rect.centerx - brick.rect.right) > abs(self.rect.centery - brick.rect.bottom):
+	                                                 angle = math.pi - angle
+	                                         elif abs(self.rect.centerx - brick.rect.right) > abs(self.rect.centery - brick.rect.bottom):
+	                                                 angle = -angle
+	                                         else:
+	                                                 angle = angle - math.pi
+	                                 else:
+	                                         angle = -angle
+	                                 self.hit = not self.hit        
+	                        if (self.rect.colliderect(br) or self.rect.colliderect(bl)) and not self.hit:
+	                                 angle = math.pi - angle
+	                                 self.hit = not self.hit
+                	elif self.hit:
+                        	self.hit = not self.hit
 
 		self.vector = (angle,z)
 		
@@ -133,19 +134,20 @@ class Brick(pygame.sprite.Sprite):
 		self.area = screen.get_rect()
 		self.rect.x = posx
 		self.rect.y = posy		
+		# call super constructor, pass in group of sprites, in this case, 'bricks'
+		pygame.sprite.Sprite.__init__(self, bricks) 
 		
-def load_bricks(level):
-	"""returns list of bricks (x,y) coords"""
-	newlevel = [0] * len(level)
-	for b in range(len(level)):
-		if level[b] == 1:
-			#insert a brick with coords into the array
-			#just drawing one line for now, keeping y=40
-			newlevel[b] = Brick((62*b, 40))
-	return newlevel
-
 #class Level(pygame.sprite.Sprite):
 	# nothing for now
+
+def make_level():
+	for i in range(8):
+		brick = Brick((0,0))
+		brick.rect.x = random.randrange(640)
+		brick.rect.y = random.randrange(480)
+		
+		bricks.add(brick)
+		all_sprites_list.add(brick)	
 
 def main():
 	pygame.init()
@@ -157,28 +159,26 @@ def main():
 	background = background.convert()
 	background.fill((0,0,0))
 
-	# initiliaze bricks
-#	global brick 
+	# used for list of all sprites including player
+	global all_sprites_list
+ 	all_sprites_list = pygame.sprite.Group()
+	
+	# initiliaze bricks, contains all brick sprites, create Group object of bricks.
 	global bricks
-	level = [0, 1, 0, 1, 0, 1]
-#	brick = Brick((231, 300))
-	bricks = load_bricks(level)
-	for b in bricks:
-		print b
-#	print brick.rect	
+	bricks = pygame.sprite.Group()
+	make_level()
 
 	# initialize player
+	
 	# initialize ball
 	speed = 3 
 	rand = ((0.1*(random.randint(5,8))))
 	ball = Ball((0,0), (.743723,speed))
+	all_sprites_list.add(ball)
 
 	# initialize sprites
 	ballsprite = pygame.sprite.RenderPlain(ball)
-	drawbricks = []
-	for i in range(len(bricks)):
-		drawbricks[i] = pygame.sprite.RenderPlain(bricks[i])
-
+	
 	# draw brick here for now
 
 	# blit everything to the screen
@@ -199,9 +199,7 @@ def main():
 		
 		screen.blit(background, ball.rect, ball.rect)
 		ballsprite.update()
-		for i in range(len(drawbricks)):
-			drawbricks[i].draw(screen)
-		bricksprite.draw(screen)	
+		all_sprites_list.draw(screen)	
 		pygame.display.flip()
 
 if __name__ == '__main__': main()
