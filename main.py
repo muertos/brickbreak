@@ -67,7 +67,9 @@ class Ball(pygame.sprite.Sprite):
 				angle = math.pi - angle
                 for brick in bricks:
 	                if self.rect.colliderect(brick.rect) == 1 and not self.hit:
-	                        quad = ((angle*(180/math.pi))%360)//90
+	        		bricks.remove(brick)
+				all_sprites_list.remove(brick)
+		                quad = ((angle*(180/math.pi))%360)//90
 	                        bt = Rect(brick.rect.x,brick.rect.y,brick.rect.width,1)
 	                        bb = Rect(brick.rect.x,brick.rect.y+brick.rect.height,brick.rect.width,1)
 	                        bl = Rect(brick.rect.x,brick.rect.y,1,brick.rect.y+brick.rect.height)
@@ -153,14 +155,28 @@ class Brick(pygame.sprite.Sprite):
 #class Level(pygame.sprite.Sprite):
 	# nothing for now
 
+# define testing level
+global level
+level = [
+	[0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,1,1,0,1,1,0,0,0],
+	[0,0,0,1,1,1,1,1,1,1,0,0],
+	[0,0,1,1,0,1,1,1,0,1,1,0],
+	[0,0,1,1,1,1,1,1,1,1,1,0],
+	[0,0,1,1,1,1,1,1,1,1,1,0],
+	[0,0,0,1,1,1,1,1,1,1,0,0]]
+
 def make_level():
-	for i in range(20):
-		brick = Brick((0,0))
-		brick.rect.x = random.randrange(640)
-		brick.rect.y = random.randrange(480)
-		
-		bricks.add(brick)
-		all_sprites_list.add(brick)	
+	""" given a matrix, make a level, starting at (0,0) """	
+	for i in range(len(level)):
+		for j in range(len(level[i])):
+			if level[i][j] == 1:
+				brick = Brick((0,0))
+				brick.rect.x = (brick.rect.width + 3) * j
+				brick.rect.y = (brick.rect.height + 3) * i
+				bricks.add(brick)
+				all_sprites_list.add(brick)	
 
 def main():
 	pygame.init()
@@ -184,7 +200,7 @@ def main():
 	# initialize player
 	
 	# initialize ball
-	speed = 3 
+	speed = 2 
 	rand = ((0.1*(random.randint(5,8))))
 	ball = Ball((0,0), (.743723,speed))
 	all_sprites_list.add(ball)
@@ -204,13 +220,15 @@ def main():
 	# event loop
 	while 1:
 		# make sure game does not run greater than 60 fps
-		clock.tick(120)
+		clock.tick(180)
 		
 		for event in pygame.event.get():
 			if event.type == QUIT:
 				return
 		
 		screen.blit(background, ball.rect, ball.rect)
+		for b in bricks:
+			screen.blit(background, b.rect, b.rect)
 		ballsprite.update()
 		all_sprites_list.draw(screen)	
 		pygame.display.flip()
