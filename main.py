@@ -79,12 +79,20 @@ class Ball(pygame.sprite.Sprite):
 	                                if self.rect.colliderect(bl):
 	                                        #if both top and left are colliding....
 						print "hit brick top and left"
+						#if more ball x is overlapping than ball y, horiz bounce
 	                                        if abs(self.rect.centerx - brick.rect.left) > abs(self.rect.centery - brick.rect.top):
 	                                                angle = math.pi - angle
+							#reset the y position of the ball so ball is not inside the brick
+							self.rect.y = brick.rect.y - self.rect.height - 1
+						#if more ball y is overlapping than ball x, vert bounce
 	                                        elif abs(self.rect.centerx - brick.rect.left) < abs(self.rect.centery - brick.rect.top):
 	                                                angle = -angle
+							#set the ball's x value so we are not inside the brick
+							self.rect.x = brick.rect.x - self.rect.width - 1
 	                                        elif quad == 2:
 	                                                angle = angle - math.pi
+							self.rect.y = brick.rect.y - self.rect.height
+							self.rect.x = brick.rect.x - ball.rect.width
 							print "hit brick top and left perfectly"
 						else:
 							angle = -angle
@@ -92,48 +100,84 @@ class Ball(pygame.sprite.Sprite):
 	                                elif self.rect.colliderect(br):
 	                                    	#if both top and right are colliding...
 						print "hit brick top and right"
+						#if more ball x overlaps brick than ball y, horiz bounce
 	                                        if abs(self.rect.centerx - brick.rect.right) > abs(self.rect.centery - brick.rect.top):
 	                                                angle = math.pi - angle
+							#reset the ball's y so as to not overlap brick
+							self.rect.y = brick.rect.y - self.rect.height
+						#if more ball y overlaps brick than ball x, vert bounce
 	                                        elif abs(self.rect.centerx - brick.rect.right) < abs(self.rect.centery - brick.rect.top):
 	                                                angle = -angle
+							#reset the ball's x so as to not overlap brick
+							self.rect.x = brick.rect.right + 1
 	                                        else:
 							print "hit brick top and right perfectly"		
 	                                                angle = angle - math.pi
+							self.rect.y = brick.rect.y - self.rect.height
+							self.rect.x = brick.rect.right + 1
 	                                else:
 	                                        angle = -angle
+						self.rect.y = brick.rect.y - self.rect.height - 1
 						print "hit brick top"
 	                                self.hit = not self.hit
+
 	                        if self.rect.colliderect(bb):
 	                                #handle bottom left corner
 	                                if self.rect.colliderect(bl):
 						print "hit brick bottom and left"
 	                                	#if both bottom and left are colliding...
+						#if more ball x overlaps than y, horiz bounce
 	                                        if abs(self.rect.centerx - brick.rect.left) > abs(self.rect.centery - brick.rect.bottom):
 	                                                angle = math.pi - angle
+							#reset the ball's y
+							self.rect.y = brick.rect.bottom + 1
+						#if more ball y overlaps brick than x, vert bounce
 	                                        elif abs(self.rect.centerx - brick.rect.left) < abs(self.rect.centery - brick.rect.bottom):
 	                                                angle = -angle
+							#reset ball's x
+							self.rect.x = brick.rect.x - self.rect.width - 1
 	                                        else:
 							print "hit brick bottom and left perfectly"
 	                                                angle = angle - math.pi
+							self.rect.y = brick.rect.bottom + 1
+							self.rect.x = brick.rect.x - self.rect.width - 1
 	                                #handle bottom right corner
 	                                elif self.rect.colliderect(br):
 						print "hit brick bottom and right"
 	                                        #if both bottom and right are colliding...
+						#if more ball x overlaps brick than y, horiz bounce
 	                                        if abs(self.rect.centerx - brick.rect.right) > abs(self.rect.centery - brick.rect.bottom):
 	                                                angle = math.pi - angle
+							#set ball's y value
+							self.rect.y = brick.rect.bottom + 1
+						#if more ball y overlaps brick than ball x, vert bounce
 	                                        elif abs(self.rect.centerx - brick.rect.right) < abs(self.rect.centery - brick.rect.bottom):
 	                                                angle = -angle
+							#reset ball's x
+							self.rect.x = brick.rect.right + 1
 	                                        else:
 							print "hit brick bottom and right perfectly"
 	                                                angle = angle - math.pi
+							self.rect.x = brick.rect.right + 1
+							self.rect.y = brick.rect.bottom + 1
 	                                else:
 	                                        angle = -angle
+						#reset ball's y
+						self.rect.y = brick.rect.bottom + 1
 						print "hit brick bottom"
 	                                self.hit = not self.hit        
-	                        if (self.rect.colliderect(br) or self.rect.colliderect(bl)) and not self.hit:
-					 print "hit either right or left"
+	                        if self.rect.colliderect(br) and not self.hit:
+					 print "hit right"
 	                                 angle = math.pi - angle
 	                                 self.hit = not self.hit
+					 self.rect.x = brick.rect.right + 1
+                                elif self.rect.colliderect(bl) and not self.hit:
+                                         print "hit left"
+                                         angle = math.pi - angle
+                                         self.hit = not self.hit
+                                         self.rect.x = brick.rect.x - 1
+
+
                 	elif self.hit:
                         	self.hit = not self.hit
 
@@ -165,6 +209,13 @@ level = [
 	[0,0,1,1,0,1,1,1,0,1,1,0],
 	[0,0,1,1,1,1,1,1,1,1,1,0],
 	[0,0,1,1,1,1,1,1,1,1,1,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,1,1,0,1,1,0,0,0],
+        [0,0,0,1,1,1,1,1,1,1,0,0],
+        [0,0,1,1,0,1,1,1,0,1,1,0],
+        [0,0,1,1,1,1,1,1,1,1,1,0],
+        [0,0,1,1,1,1,1,1,1,1,1,0],
 	[0,0,0,1,1,1,1,1,1,1,0,0]]
 
 def make_level():
@@ -200,7 +251,7 @@ def main():
 	# initialize player
 	
 	# initialize ball
-	speed = 2 
+	speed = 7 
 	rand = ((0.1*(random.randint(5,8))))
 	ball = Ball((0,0), (.743723,speed))
 	all_sprites_list.add(ball)
@@ -220,7 +271,7 @@ def main():
 	# event loop
 	while 1:
 		# make sure game does not run greater than 60 fps
-		clock.tick(180)
+		clock.tick(120)
 		
 		for event in pygame.event.get():
 			if event.type == QUIT:
