@@ -4,6 +4,14 @@
 #
 # Nick West, 04/09/2018
 
+#Constants
+
+SCREEN_HEIGHT = 480
+SCREEN_WIDTH = 640
+PLAYER_HEIGHT = 8
+PLAYER_WIDTH = 85
+PLAYER_SPEED = 5
+
 try:
 	import sys
 	import random
@@ -185,22 +193,37 @@ class Ball(pygame.sprite.Sprite):
 		
 class Brick(pygame.sprite.Sprite):
 	""" brick object """
-	""" much to do here """
 	def __init__(self, (posx, posy)):
 		pygame.sprite.Sprite.__init__(self)
 		self.image, self.rect = load_png('brick.png')
-		screen = pygame.display.get_surface()
-		self.area = screen.get_rect()
 		self.rect.x = posx
 		self.rect.y = posy		
 		# call super constructor, pass in group of sprites, in this case, 'bricks'
 		pygame.sprite.Sprite.__init__(self, bricks) 
+
+class Player(pygame.sprite.Sprite):
+	""" Player object """
+	#constructor
+	def __init__(self, x, y):
+		#what the heck is this for?
+		pygame.sprite.Sprite.__init__(self)
+		self.image, self.rect = load_png('paddle.png')
+		self.rect.x = x
+		self.rect.y = y
+		pygame.sprite.Sprite.__init__(self, all_sprites_list)
+	#paddle's move function
+	def move(dirx):
+		self.rect.x += dirx
+		#make sure paddle can't go off screen
+		if self.rect.x < 0:
+			self.rect.x = 1
+		if  self.rect.right > SCREEN_WIDTH:
+			self.rect.right = SCREEN_WIDTH
 		
 #class Level(pygame.sprite.Sprite):
 	# nothing for now
 
 # define testing level
-global level
 level = [
 	[0,0,0,0,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0,0,0,0],
@@ -208,7 +231,7 @@ level = [
 	[0,0,0,1,1,1,1,1,1,1,0,0],
 	[0,0,1,1,0,1,1,1,0,1,1,0],
 	[0,0,1,1,1,1,1,1,1,1,1,0],
-	[0,0,1,1,1,1,1,1,1,1,1,0],
+	[0,0,1,0,1,0,1,0,1,0,1,0],
         [0,0,0,0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0,0,0,0],
         [0,0,0,0,1,1,0,1,1,0,0,0],
@@ -216,9 +239,10 @@ level = [
         [0,0,1,1,0,1,1,1,0,1,1,0],
         [0,0,1,1,1,1,1,1,1,1,1,0],
         [0,0,1,1,1,1,1,1,1,1,1,0],
+	[0,0,1,0,1,0,1,0,1,0,1,0],
 	[0,0,0,1,1,1,1,1,1,1,0,0]]
 
-def make_level():
+def make_level(level):
 	""" given a matrix, make a level, starting at (0,0) """	
 	for i in range(len(level)):
 		for j in range(len(level[i])):
@@ -239,19 +263,21 @@ def main():
 	background = background.convert()
 	background.fill((0,0,0))
 
-	# used for list of all sprites including player
+	# used for list of all sprites
 	global all_sprites_list
  	all_sprites_list = pygame.sprite.Group()
 	
 	# initiliaze bricks, contains all brick sprites, create Group object of bricks.
 	global bricks
 	bricks = pygame.sprite.Group()
-	make_level()
+	make_level(level)
 
 	# initialize player
-	
+	player = Player((SCREEN_WIDTH / 2) - (PLAYER_WIDTH / 2), SCREEN_HEIGHT - PLAYER_HEIGHT)
+	all_sprites_list.add(player)
+
 	# initialize ball
-	speed = 7 
+	speed = 4 
 	rand = ((0.1*(random.randint(5,8))))
 	ball = Ball((0,0), (.743723,speed))
 	all_sprites_list.add(ball)
@@ -259,9 +285,7 @@ def main():
 	# initialize sprites
 	ballsprite = pygame.sprite.RenderPlain(ball)
 	
-	# draw brick here for now
-
-	# blit everything to the screen
+	# blit background to screen
 	screen.blit(background, (0,0))
 	pygame.display.flip()
 
@@ -270,18 +294,27 @@ def main():
 
 	# event loop
 	while 1:
-		# make sure game does not run greater than 60 fps
+		# controls the speed at which the game run (fps)
 		clock.tick(120)
 		
+		# keyboard input
 		for event in pygame.event.get():
 			if event.type == QUIT:
 				return
-		
-		screen.blit(background, ball.rect, ball.rect)
-		for b in bricks:
-			screen.blit(background, b.rect, b.rect)
+			if event.type == KEYLEFT:
+				player.move(PLAYER_SPEED)
+			if event.type == KEYRIGHT:
+				player.move(-PLAYER_SPEED)
+		# blit all sprites (can we do this another way? ie, only draw sprites when they are needed?) blitting is resource intensive	
+		for sprite in all_sprites_list:
+			screen.blit(background, sprite.rect, sprite.rect)
+		# check for movement of ball
 		ballsprite.update()
+
+		# why is this here?
 		all_sprites_list.draw(screen)	
+		
+		# And this?
 		pygame.display.flip()
 
 if __name__ == '__main__': main()
