@@ -60,19 +60,47 @@ class Ball(pygame.sprite.Sprite):
 		newpos = self.calcnewpos(self.rect, self.vector)
 		self.rect = newpos
 		(angle,z) = self.vector
-	
+		
+		print self.rect.x, self.rect.y	
 		#check for collision with walls
-		if not self.area.contains(newpos):
-			tl = not self.area.collidepoint(newpos.topleft)
-			tr = not self.area.collidepoint(newpos.topright)
-			bl = not self.area.collidepoint(newpos.bottomleft)
-			br = not self.area.collidepoint(newpos.bottomright)
-			if tr and tl or (br and bl):
-				angle = -angle
-			if tl and bl:
-				angle = math.pi - angle
-			if tr and br:
-				angle = math.pi - angle
+		if self.rect.x < 0:
+			# vertical bounce
+			self.rect.x = 1
+			angle = -angle
+		if self.rect.x > SCREEN_WIDTH - self.rect.width:
+			# vertical bounce
+			self.rect.x = SCREEN_WIDTH - self.rect.width
+			angle = -angle
+		if self.rect.y < 0:
+			# horizontal bounce
+			self.rect.y = 1
+			angle = math.pi - angle
+		if self.rect.y > SCREEN_HEIGHT:
+			# ball out of bounds
+			self.oob == True
+
+
+#		if not self.area.contains(newpos):
+#			tl = not self.area.collidepoint(newpos.topleft)
+#			tr = not self.area.collidepoint(newpos.topright)
+#			bl = not self.area.collidepoint(newpos.bottomleft)
+#			br = not self.area.collidepoint(newpos.bottomright)
+#			if tr and tl:
+#				angle = -angle
+#			if tl and bl:
+#				angle = math.pi - angle
+#			if tr and br:
+#				angle = math.pi - angle
+#			if bl and br:
+#				return True
+
+		# check for collision with paddle
+		if self.rect.colliderect(player.rect):
+			# fix ball's y
+			self.rect.y = player.rect.y - self.rect.height
+			# horizontal bounce
+			angle = math.pi - angle
+		# check for collision with bricks
                 for brick in bricks:
 	                if self.rect.colliderect(brick.rect) == 1 and not self.hit:
 	        		bricks.remove(brick)
@@ -212,7 +240,7 @@ class Player(pygame.sprite.Sprite):
 		self.rect.y = y
 		pygame.sprite.Sprite.__init__(self, all_sprites_list)
 	#paddle's move function
-	def move(dirx):
+	def move(self, dirx):
 		self.rect.x += dirx
 		#make sure paddle can't go off screen
 		if self.rect.x < 0:
@@ -273,6 +301,7 @@ def main():
 	make_level(level)
 
 	# initialize player
+	global player
 	player = Player((SCREEN_WIDTH / 2) - (PLAYER_WIDTH / 2), SCREEN_HEIGHT - PLAYER_HEIGHT)
 	all_sprites_list.add(player)
 
@@ -301,13 +330,19 @@ def main():
 		for event in pygame.event.get():
 			if event.type == QUIT:
 				return
-			if event.type == KEYLEFT:
-				player.move(PLAYER_SPEED)
-			if event.type == KEYRIGHT:
-				player.move(-PLAYER_SPEED)
+		# get list of keys, handle input
+		keys = pygame.key.get_pressed()
+		if keys[pygame.K_LEFT]:
+			player.move(-PLAYER_SPEED)
+		if keys[pygame.K_RIGHT]:
+			player.move(PLAYER_SPEED)	
+
+		# clear screen to produce illusion of animation
+		screen.fill((0,0,0))
+
 		# blit all sprites (can we do this another way? ie, only draw sprites when they are needed?) blitting is resource intensive	
-		for sprite in all_sprites_list:
-			screen.blit(background, sprite.rect, sprite.rect)
+		#for sprite in all_sprites_list:
+		#	screen.blit(background, sprite.rect, sprite.rect)
 		# check for movement of ball
 		ballsprite.update()
 
