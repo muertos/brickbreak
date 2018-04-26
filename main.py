@@ -4,7 +4,9 @@
 #
 # Nick West, 04/09/2018
 
-#Constants
+# Full playable
+
+# Constants
 
 SCREEN_HEIGHT = 480
 SCREEN_WIDTH = 640
