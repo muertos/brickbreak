@@ -51,19 +51,32 @@ class Ball(pygame.sprite.Sprite):
 		self.vector = vector
 		self.hit = 0
 	
-        def calcnewpos(self,rect,vector):
-                (angle,z) = vector
-                (dx,dy) = (z*math.cos(angle), z*math.sin(angle))
-                return rect.move(dx,dy)
+#        def calcnewpos(self,rect,vector):
+#                (angle,z) = vector
+#                (dx,dy) = (z*math.cos(angle), z*math.sin(angle))
+#                return rect.move(dx,dy)
 
 	def update(self):
-		newpos = self.calcnewpos(self.rect, self.vector)
-		self.rect = newpos
-		(angle,z) = self.vector
+#		newpos = self.calcnewpos(self.rect, self.vector)
+#		self.rect = newpos
+#		(angle,z) = self.vector
 		
-		print self.rect.x, self.rect.y	
+#		print self.rect.x, self.rect.y, angle
+
+		# extract angle and z from vector
+		(angle,z) = self.vector		
+
+		# calculate change in x and y
+		dx = z * math.sin(angle)
+		dy = z * math.cos(angle)
+
+		# update the ball's x and y to the new position
+		self.rect.x += dx
+		self.rect.y += dy
+
 		#check for collision with walls
 		if self.rect.x < 0:
+			print "x < 0"
 			# vertical bounce
 			self.rect.x = 1
 			angle = -angle
@@ -217,6 +230,7 @@ class Ball(pygame.sprite.Sprite):
                 	elif self.hit:
                         	self.hit = not self.hit
 
+		# update the ball's vector
 		self.vector = (angle,z)
 		
 class Brick(pygame.sprite.Sprite):
