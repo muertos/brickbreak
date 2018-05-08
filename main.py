@@ -13,6 +13,10 @@ SCREEN_WIDTH = 640
 PLAYER_HEIGHT = 8
 PLAYER_WIDTH = 85
 PLAYER_SPEED = 5
+BALL_WIDTH = 11
+BALL_HEIGHT = 11
+SCORE = 0
+LIVES = 3
 
 try:
 	import sys
@@ -45,7 +49,7 @@ class Ball(pygame.sprite.Sprite):
 	""" ball object to control movement and collision """
 
 	#constructor
-	def __init__(self, (xy), vector):
+	def __init__(self, x, y, vector):
 		pygame.sprite.Sprite.__init__(self)
 		self.image, self.rect = load_png('ball.png')
 		screen = pygame.display.get_surface()
@@ -53,6 +57,8 @@ class Ball(pygame.sprite.Sprite):
 		self.vector = vector
 		self.hit = 0
 		self.oob = False
+		self.rect.x = x
+		self.rect.y = y
 	
         def calcnewpos(self,rect,vector):
                 (angle,z) = vector
@@ -64,38 +70,6 @@ class Ball(pygame.sprite.Sprite):
 		self.rect = newpos
 		(angle,z) = self.vector
 		
-#		print self.rect.x, self.rect.y, angle
-
-#		# extract angle and z from vector
-#		(angle,z) = self.vector		
-
-#		# calculate change in x and y
-#		dx = z * math.sin(angle)
-#		dy = z * math.cos(angle)
-
-#		# update the ball's x and y to the new position
-#		self.rect.x += dx
-#		self.rect.y += dy
-
-#		#check for collision with walls
-#		if self.rect.x < 0:
-#			print "x < 0"
-#			# vertical bounce
-#			self.rect.x = 1
-#			angle = -angle
-#		if self.rect.x > SCREEN_WIDTH - self.rect.width:
-#			# vertical bounce
-#			self.rect.x = SCREEN_WIDTH - self.rect.width
-#			angle = -angle
-#		if self.rect.y < 0:
-#			# horizontal bounce
-#			self.rect.y = 1
-#			angle = math.pi - angle
-#		if self.rect.y > SCREEN_HEIGHT:
-#			# ball out of bounds
-#			self.oob == True
-
-
 		# if the display screen does not contain the ball's new position
 		if not self.area.contains(newpos):
 			# is ball's new position topleft corner not contained in the display screen?
@@ -328,7 +302,7 @@ def main():
 	# initialize ball
 	speed = 4 
 	rand = ((0.1*(random.randint(5,8))))
-	ball = Ball((0,0), (.743723,speed))
+	ball = Ball(player.rect.centerx - (BALL_WIDTH / 2), player.rect.y - BALL_HEIGHT, (.743723, speed))
 	all_sprites_list.add(ball)
 
 	# initialize sprites
@@ -367,6 +341,8 @@ def main():
 		ballsprite.update()
 		if ball.oob == True:
 			print "ball out of bounds. you suck"
+			#lives -= 1
+			#reset()
 			break
 
 		# why is this here?
